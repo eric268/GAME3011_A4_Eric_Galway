@@ -60,14 +60,13 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
         //Check if tile is allowed to be pressed
         if (mGameManager.mActiveRow == ActiveRowOrientation.Horizontal && mYPos == mGameManager.mRowTilePos)
         {
-            FTileSelected(mYPos, mTileType);
+            FTileSelected(mXPos, mTileType);
             gameObject.SetActive(false);
-            //Destroy(gameObject);
         }
         else if (mGameManager.mActiveRow == ActiveRowOrientation.Vertical && mXPos == mGameManager.mRowTilePos)
         {
-            FTileSelected(mXPos, mTileType);
-            Destroy(gameObject);
+            FTileSelected(mYPos, mTileType);
+            gameObject.SetActive(false);
         }
 
         //Do something with game
