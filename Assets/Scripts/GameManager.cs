@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public enum ActiveRowOrientation
 {
@@ -17,8 +18,8 @@ public class GameManager : MonoBehaviour
     public DifficultyLevel mDifficultyLevel;
     public ActiveRowOrientation mActiveRow;
     public int mRowTilePos = 0;
-    int mBufferIndex = 0;
-    int mCorrectTilesNeeded;
+    public int mBufferIndex = 0;
+    public int mCorrectTilesNeeded;
     public TileType[] mSelectedTypeBuffer;
     public TileType[] mCorrectTileBuffer;
 
@@ -36,8 +37,12 @@ public class GameManager : MonoBehaviour
 
     public void ResetGameValues()
     {
+        mDifficultyLevel = (DifficultyLevel)UnityEngine.Random.Range((int)DifficultyLevel.Easy, (int)DifficultyLevel.NUM_DIFFICULTY_LEVELS);
+        mGridGenerator.mGridDimensions = mDifficultyManager.mDifficultyGridDimension[(int)mDifficultyLevel];
+        mPlayerLevel = UnityEngine.Random.Range(1, mDifficultyManager.mMaxSkillLevel + 1);
+
         mSelectedHighlighter.gameObject.SetActive(false);
-        mCorrectTilesNeeded = (int)mDifficultyLevel + 2;
+        mCorrectTilesNeeded = (int)mDifficultyLevel + 3;
         mSelectedTypeBuffer = new TileType[mCorrectTilesNeeded];
         mCorrectTileBuffer = new TileType[mCorrectTilesNeeded];
 
@@ -47,10 +52,6 @@ public class GameManager : MonoBehaviour
         }
 
         //Need to generate a grid with correct values here
-
-        mPlayerLevel = UnityEngine.Random.Range(1, mDifficultyManager.mMaxSkillLevel + 1);
-        mDifficultyLevel = (DifficultyLevel)UnityEngine.Random.Range((int)DifficultyLevel.Easy, (int)DifficultyLevel.NUM_DIFFICULTY_LEVELS);
-        mGridGenerator.mGridDimensions = mDifficultyManager.mDifficultyGridDimension[(int)mDifficultyLevel];
 
         mBufferIndex = 0;
         mRowTilePos = 0;

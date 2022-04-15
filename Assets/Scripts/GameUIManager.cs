@@ -16,6 +16,7 @@ public class GameUIManager : MonoBehaviour
         mGridGenerator = FindObjectOfType<GridGenerator>();
         FRestartDelegate += mGameManager.ResetGameValues;
         FRestartDelegate += mGridGenerator.GenerateNewGrid;
+        FRestartDelegate += mGridGenerator.PopulateGrid;
     }
 
     public void OnRestartPressed()
@@ -26,6 +27,6 @@ public class GameUIManager : MonoBehaviour
     private void OnDestroy()
     {
         FRestartDelegate -= mGameManager.ResetGameValues;
-        FRestartDelegate -= mGridGenerator.GenerateNewGrid;
+        FRestartDelegate -= mGridGenerator.PopulateGrid;
     }
 }

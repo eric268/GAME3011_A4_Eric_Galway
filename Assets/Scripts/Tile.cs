@@ -57,15 +57,18 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (mGameManager.mBufferIndex >= mGameManager.mCorrectTilesNeeded)
+            return;
+
         //Check if tile is allowed to be pressed
-        if (mGameManager.mActiveRow == ActiveRowOrientation.Horizontal && mYPos == mGameManager.mRowTilePos)
-        {
-            FTileSelected(mXPos, mTileType);
-            gameObject.SetActive(false);
-        }
-        else if (mGameManager.mActiveRow == ActiveRowOrientation.Vertical && mXPos == mGameManager.mRowTilePos)
+        if (mGameManager.mActiveRow == ActiveRowOrientation.Horizontal && mXPos == mGameManager.mRowTilePos)
         {
             FTileSelected(mYPos, mTileType);
+            gameObject.SetActive(false);
+        }
+        else if (mGameManager.mActiveRow == ActiveRowOrientation.Vertical && mYPos == mGameManager.mRowTilePos)
+        {
+            FTileSelected(mXPos, mTileType);
             gameObject.SetActive(false);
         }
 
@@ -75,8 +78,8 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public void OnPointerEnter(PointerEventData eventData)
     {
         //Check if tile is allowed to be pressed
-        if (mGameManager.mActiveRow == ActiveRowOrientation.Horizontal && mYPos == mGameManager.mRowTilePos ||
-            mGameManager.mActiveRow == ActiveRowOrientation.Vertical && mXPos == mGameManager.mRowTilePos)
+        if (mGameManager.mActiveRow == ActiveRowOrientation.Horizontal && mXPos == mGameManager.mRowTilePos ||
+            mGameManager.mActiveRow == ActiveRowOrientation.Vertical && mYPos == mGameManager.mRowTilePos)
         {
             mTileImage.color = new Color(mTileImage.color.r, mTileImage.color.g, mTileImage.color.b, mHoveredOpacity);
         }
