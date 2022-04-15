@@ -26,10 +26,11 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
     public float mBaseOpacity;
     public float mHoveredOpacity;
     public GameManager mGameManager;
+    public bool mIsInteractable = true;
 
     public Action<int, TileType> FTileSelected;
 
-    private Image mTileImage;
+    public Image mTileImage;
 
     void Awake()
     {
@@ -57,7 +58,7 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (mGameManager.mBufferIndex >= mGameManager.mCorrectTilesNeeded)
+        if (mGameManager.mBufferIndex >= mGameManager.mCorrectTilesNeeded || !mIsInteractable || !mGameManager.mGameActive)
             return;
 
         //Check if tile is allowed to be pressed
@@ -77,6 +78,9 @@ public class Tile : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IP
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (!mIsInteractable || !mGameManager.mGameActive)
+            return;
+
         //Check if tile is allowed to be pressed
         if (mGameManager.mActiveRow == ActiveRowOrientation.Horizontal && mXPos == mGameManager.mRowTilePos ||
             mGameManager.mActiveRow == ActiveRowOrientation.Vertical && mYPos == mGameManager.mRowTilePos)

@@ -15,8 +15,10 @@ public class GridGenerator : MonoBehaviour
     [SerializeField]
     public int mGridDimensions;
     public GameObject [,] tileArray;
-
+    public GameObject mCorrectInputBuffer;
+    public GameObject mPlayerInputBuffer;
     private GameManager mGameManager;
+
 
     //[SerializeField]
     //private TileTypes m_tileType;
@@ -48,6 +50,7 @@ public class GridGenerator : MonoBehaviour
             //Provides information to tiles
             GameObject newObject = Instantiate(tileSlotPrefab, this.transform);
             newObject.GetComponent<Tile>().mTileType = TileType.None;
+            newObject.GetComponent<Tile>().mIsInteractable = true;
             newObject.name = "Tile x: " + (colCounter) + " y: " + (rowCounter);
             newObject.GetComponent<Tile>().mXPos = colCounter;
             newObject.GetComponent<Tile>().mYPos = rowCounter;
@@ -70,6 +73,14 @@ public class GridGenerator : MonoBehaviour
         {
             GameObject.Destroy(child.gameObject);
         }
+        foreach (Transform child in mCorrectInputBuffer.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        foreach (Transform child in mPlayerInputBuffer.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
     }
 
     public void GenerateNewGrid()
@@ -83,6 +94,8 @@ public class GridGenerator : MonoBehaviour
     {
         GenerateHackingPath();
         FillDummyTiles();
+        GenerateCodeBuffer();
+        GeneratePlayerInputBuffer();
     }
 
     public void GenerateHackingPath()
@@ -148,6 +161,34 @@ public class GridGenerator : MonoBehaviour
                 t.mTileType = ranType;
                 t.GetComponentInChildren<TextMeshProUGUI>().text = t.mTileType.ToString();
             }
+        }
+    }
+
+    public void GenerateCodeBuffer()
+    {
+        for (int i = 0; i < mGameManager.mCorrectTileBuffer.Length; i++)
+        {
+            //Provides information to tiles
+            GameObject newObject = Instantiate(tileSlotPrefab, mCorrectInputBuffer.transform);
+            newObject.GetComponent<Tile>().mTileType = mGameManager.mCorrectTileBuffer[i];
+            newObject.GetComponent<Tile>().mIsInteractable = false;
+            newObject.GetComponentInChildren<TextMeshProUGUI>().text = mGameManager.mCorrectTileBuffer[i].ToString();
+            newObject.name = "Correct tile #: " + i + 1;
+            newObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(i * spacing, 0);
+        }
+    }
+
+    public void GeneratePlayerInputBuffer()
+    {
+        for (int i = 0; i < mGameManager.mCorrectTileBuffer.Length; i++)
+        {
+            //Provides information to tiles
+            GameObject newObject = Instantiate(tileSlotPrefab, mPlayerInputBuffer.transform);
+            newObject.GetComponent<Tile>().mTileType =TileType.None;
+            newObject.GetComponent<Tile>().mIsInteractable = false;
+            newObject.GetComponentInChildren<TextMeshProUGUI>().text = "--";
+            newObject.name = "Player Input tile #: " + i + 1;
+            newObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(i * spacing, 0);
         }
     }
 }

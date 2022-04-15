@@ -14,24 +14,28 @@ public class GameManager : MonoBehaviour
 {
     public DifficultyManager mDifficultyManager;
     public GridGenerator mGridGenerator;
+    public GameUIManager mUIManager;
     public int mPlayerLevel;
     public DifficultyLevel mDifficultyLevel;
     public ActiveRowOrientation mActiveRow;
     public int mRowTilePos = 0;
     public int mBufferIndex = 0;
     public int mCorrectTilesNeeded;
+    public int mNumCorrectSelections;
     public TileType[] mSelectedTypeBuffer;
     public TileType[] mCorrectTileBuffer;
 
     public GameObject mSelectedHighlighter;
     public GameObject mAvailableHighlighter;
-
+    public bool mGameActive = false;
+    public bool mGameOver = false;
     private float mTileSize = 50.0f;
 
     private void Awake()
     {
         mDifficultyManager = GetComponent<DifficultyManager>();
         mGridGenerator = FindObjectOfType<GridGenerator>();
+        mUIManager = FindObjectOfType<GameUIManager>();
         ResetGameValues();
     }
 
@@ -43,7 +47,7 @@ public class GameManager : MonoBehaviour
 
         mSelectedHighlighter.gameObject.SetActive(false);
         mCorrectTilesNeeded = (int)mDifficultyLevel + 3;
-        mSelectedTypeBuffer = new TileType[mCorrectTilesNeeded];
+        mNumCorrectSelections = 0;
         mCorrectTileBuffer = new TileType[mCorrectTilesNeeded];
 
         for (int i =0; i < mCorrectTilesNeeded; i++)
@@ -51,18 +55,18 @@ public class GameManager : MonoBehaviour
             mCorrectTileBuffer[i] = (TileType)UnityEngine.Random.Range(0, (int)TileType.NUM_Tile_Types);
         }
 
-        //Need to generate a grid with correct values here
-
         mBufferIndex = 0;
         mRowTilePos = 0;
         mActiveRow = ActiveRowOrientation.Horizontal;
-
+        mGameActive = true;
+        mUIManager.OnGameStart();
         MoveHighlightedPosition(ref mAvailableHighlighter, mRowTilePos, mActiveRow);
     }
 
     public void TileSelected(int pos, TileType type)
     {
-        mSelectedTypeBuffer[mBufferIndex++] = type;
+        UpdateBuffers(type);
+
         mActiveRow = (mActiveRow == ActiveRowOrientation.Horizontal) ? ActiveRowOrientation.Vertical : ActiveRowOrientation.Horizontal;
         mRowTilePos = pos;
 
@@ -80,13 +84,38 @@ public class GameManager : MonoBehaviour
         float pos = (mGridGenerator.mGridDimensions * mGridGenerator.spacing - 75) /2.0f;
         if (orientation == ActiveRowOrientation.Horizontal)
         {
-            rectTransform.sizeDelta = new Vector2(mGridGenerator.mGridDimensions * mGridGenerator.spacing - 25.0f, mTileSize);
-            rectTransform.anchoredPosition = new Vector2(pos, -(gridPos) * (mTileSize + 25.0f));
+            rectTransform.sizeDelta = new Vector2(mGridGenerator.mGridDimensions * mGridGenerator.spacing - offset, mTileSize);
+            rectTransform.anchoredPosition = new Vector2(pos, -(gridPos) * (mTileSize + offset));
         }
         else
         {
-            rectTransform.sizeDelta = new Vector2(mTileSize, mGridGenerator.mGridDimensions * mGridGenerator.spacing - 25.0f);
-            rectTransform.anchoredPosition = new Vector2(gridPos * (mTileSize + 25.0f), -pos);
+            rectTransform.sizeDelta = new Vector2(mTileSize, mGridGenerator.mGridDimensions * mGridGenerator.spacing - offset);
+            rectTransform.anchoredPosition = new Vector2(gridPos * (mTileSize + offset), -pos);
         }
+    }
+
+    public void UpdateBuffers(TileType type)
+    {
+        Tile correctBufferTile = mGridGenerator.mCorrectInputBuffer.transform.GetChild(mBufferIndex).GetComponent<Tile>();
+        Tile playerInputTile = mGridGenerator.mPlayerInputBuffer.transform.GetChild(mBufferIndex).GetComponent<Tile>();
+        playerInputTile.GetComponentInChildren<TextMeshProUGUI>().text = type.ToString();
+
+        if (type == mCorrectTileBuffer[mBufferIndex])
+        {
+            correctBufferTile.mTileImage.color = new Color(0, 1, 0, correctBufferTile.mHoveredOpacity);
+            mNumCorrectSelections++;
+            if (mNumCorrectSelections == mCorrectTilesNeeded)
+            {
+                mGameActive = false;
+                mUIManager.OnGameOver(true);
+            }
+        }
+        else
+        {
+            correctBufferTile.mTileImage.color = new Color(1, 0, 0, correctBufferTile.mHoveredOpacity);
+            mGameActive = false;
+            mUIManager.OnGameOver(false);
+        }
+        mBufferIndex++;
     }
 }

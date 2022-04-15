@@ -14,5 +14,6 @@ public class DifficultyManager : MonoBehaviour
 {
     [SerializeField]
     public int[] mDifficultyGridDimension = new int[3];
+    public int[] mTimePerDifficulty = new int[3];
     public int mMaxSkillLevel = 10;
 }
