@@ -37,6 +37,7 @@ public class GameUIManager : MonoBehaviour
         mTimeToCompleteHack = mDifficultyManager.mTimePerDifficulty[(int)mGameManager.mDifficultyLevel] + mGameManager.mPlayerLevel;
         UpdateText();
         CancelInvoke();
+        InvokeRepeating(nameof(CountdownTimer), 0.0f, 1.0f);
     }
 
     public void OnMainMenuPressed()

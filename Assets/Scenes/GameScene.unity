@@ -2349,7 +2349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mDifficultyGridDimension: 040000000500000006000000
-  mTimePerDifficulty: 0c0000000a00000008000000
+  mTimePerDifficulty: 0e0000000c0000000a000000
   mMaxSkillLevel: 10
 --- !u!1 &2132206264
 GameObject:
